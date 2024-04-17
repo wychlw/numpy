@@ -414,12 +414,14 @@ class Test_RISCV_Features(AbstractTest):
 
     def load_flags(self):
         isa = self.get_cpuinfo_item("isa")
-        # Check if RVV detection works
-        is_vext = re.match(
-            "RV(64|32)[A-Z]*V[A-Z]*[A-Z,_]*", str(list(isa)[0]), re.IGNORECASE)
-        print(is_vext)
-        if (is_vext):
+        values = set()
+        rv_flags = [s.strip() for s in list(isa)[0][4:].split('_')]
+        values = values.union([ch for ch in rv_flags[0].upper()])
+        for s in rv_flags[1:]:
+            values = values.union([s.upper()])
+        self.features_flags = values
+        if 'V' in values:
             self.features_map = dict(
-                RVV="RVV"
+                RVV="V"
             )
 
